@@ -11,6 +11,9 @@
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+	Modifications made by [Gianluca Beil]:
+	- Replaced var
 */
 package mslinks;
 
@@ -33,7 +36,7 @@ public class Examples {
 	public void WindowsExample() throws IOException, ShellLinkException {
 		assumeTrue(isRunningOnWindows());
 
-		var sl = new ShellLink()
+		ShellLink sl = new ShellLink()
 			.setWorkingDir(Paths.get("..").toAbsolutePath().normalize().toString())
 			.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
 		sl.getHeader().setIconIndex(128);
@@ -66,7 +69,7 @@ public class Examples {
 		workingDir = workingDir.replace("/mnt/" + driveLetter + "/", driveLetter.toUpperCase() + ":\\").replaceAll("\\/", "\\\\");
 		String linkWorkingDir = workingDir.substring(0, workingDir.lastIndexOf('\\'));
 
-		var sl = new ShellLink()
+		ShellLink sl = new ShellLink()
 			.setWorkingDir(linkWorkingDir)
 			.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
 		sl.getHeader().setIconIndex(128);

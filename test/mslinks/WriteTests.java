@@ -11,6 +11,10 @@
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	
+	Modifications made by [Gianluca Beil]:
+	- Replaced var
+	- Replaced Path.of
 */
 package mslinks;
 
@@ -22,6 +26,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.junit.Test;
@@ -42,8 +47,8 @@ public class WriteTests {
 	private static final boolean DEBUG_EXPORT = false;
 
 	private ShellLinkHelper createLink() {
-		var link = new ShellLink();
-		var header = link.getHeader();
+		ShellLink link = new ShellLink();
+		ShellLinkHeader header = link.getHeader();
 
 		header.getAccessTime().clear();
 		header.getAccessTime().set(2000, 1, 1);
@@ -56,8 +61,8 @@ public class WriteTests {
 	}
 
 	private byte[] serializeLink(ShellLink link) throws IOException {
-		var stream = new ByteArrayOutputStream();
-		var writer = new ByteWriter(stream);
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		ByteWriter writer = new ByteWriter(stream);
 		writer.setLittleEndian();
 		link.serialize(writer);
 		return stream.toByteArray();
@@ -65,9 +70,9 @@ public class WriteTests {
 
 	private byte[] serializeLink(ShellLink link, String name) throws IOException
 	{
-		var data = serializeLink(link);
+		byte[] data = serializeLink(link);
 		if (DEBUG_EXPORT) {
-			Path exportDir = Path.of(".working_dir", "export");
+			Path exportDir = Paths.get(".working_dir", "export");
 			Files.createDirectories(exportDir);
 			Files.write(exportDir.resolve(name + ".lnk"), data, StandardOpenOption.CREATE);
 		}
@@ -76,7 +81,7 @@ public class WriteTests {
 
 	@Test
 	public void TestBasicLink() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setLocalTarget(PROJECT_DRIVE, PROJECT_DIR + "\\pause.bat", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -87,7 +92,7 @@ public class WriteTests {
 
 	@Test
 	public void TestConsoleLink() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setLocalTarget(PROJECT_DRIVE, PROJECT_DIR + "\\pause.bat", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -107,7 +112,7 @@ public class WriteTests {
 
 	@Test
 	public void TestLinkIcon() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setLocalTarget(PROJECT_DRIVE, PROJECT_DIR + "\\pause.bat", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -121,7 +126,7 @@ public class WriteTests {
 
 	@Test
 	public void TestRunAsAdmin() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setLocalTarget(PROJECT_DRIVE, PROJECT_DIR + "\\pause.bat", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -135,7 +140,7 @@ public class WriteTests {
 	public void TestUnicodePath() throws ShellLinkException, IOException {
 		assumeTrue("The default charset has to be UTF-8 for this test", Charset.defaultCharset().name().equals("UTF-8"));
 
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setLocalTarget(PROJECT_DRIVE, PROJECT_DIR + "\\\u03B1\u03B1\u03B1.bat", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -146,7 +151,7 @@ public class WriteTests {
 
 	@Test
 	public void TestNetworkSharePath() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setNetworkTarget("\\\\laptop\\share\\testfile.txt", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -157,7 +162,7 @@ public class WriteTests {
 
 	@Test
 	public void TestNetworkDrivePathAsLocalPath() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setLocalTarget("Z", "testfile.txt", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -168,7 +173,7 @@ public class WriteTests {
 
 	@Test
 	public void TestNetworkDrivePath() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		// network mapped drive has both local and network path
 		link.setLocalTarget("Z", "testfile.txt", Options.ForceTypeFile)
 			.setNetworkTarget("\\\\laptop\\share\\testfile.txt", Options.ForceTypeFile)
@@ -182,7 +187,7 @@ public class WriteTests {
 
 	@Test
 	public void TestDirectoryLink() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setLocalTarget("C", "Windows", Options.ForceTypeDirectory)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat");
@@ -194,7 +199,7 @@ public class WriteTests {
 	public void TestNetworkShareUnicodePath() throws ShellLinkException, IOException {
 		assumeTrue("The default charset has to be UTF-8 for this test", Charset.defaultCharset().name().equals("UTF-8"));
 
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setNetworkTarget("\\\\laptop\\\u03B1\u03B1\u03B1\\\u03B1\u03B1\u03B1.txt", Options.ForceTypeFile)
 			.getLink()
 				.setRelativePath(RELATIVE_PATH + "\\pause.bat")
@@ -205,7 +210,7 @@ public class WriteTests {
 
 	@Test
 	public void TestDesktopLink() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setSpecialFolderTarget(Registry.CLSID_DESKTOP, "pause.bat", Options.ForceTypeFile);
 
 		assertArrayEquals(WriteTestData.desktoplink, serializeLink(link.getLink(), "desktoplink"));
@@ -213,7 +218,7 @@ public class WriteTests {
 
 	@Test
 	public void TestDesktopLinkSimple() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setDesktopRelativeTarget("pause.bat", Options.ForceTypeFile);
 
 		assertArrayEquals(WriteTestData.desktoplink_simple, serializeLink(link.getLink(), "desktoplink_simple"));
@@ -221,7 +226,7 @@ public class WriteTests {
 
 	@Test
 	public void TestDocumentsLink() throws ShellLinkException, IOException {
-		var link = createLink();
+		ShellLinkHelper link = createLink();
 		link.setSpecialFolderTarget(Registry.CLSID_DOCUMENTS, "pause.bat", Options.ForceTypeFile);
 
 		assertArrayEquals(WriteTestData.documentslink, serializeLink(link.getLink(), "documentslink"));

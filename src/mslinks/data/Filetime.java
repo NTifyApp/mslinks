@@ -11,6 +11,9 @@
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+	Modifications made by [Gianluca Beil]:
+	- Replaced var
 */
 package mslinks.data;
 
@@ -60,7 +63,7 @@ public class Filetime extends GregorianCalendar implements Serializable {
 		if (!super.equals(o))
 			return false;
 
-		var obj = (Filetime)o;
+		Filetime obj = (Filetime)o;
 		return fraction == obj.fraction;
 	}
 

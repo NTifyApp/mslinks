@@ -11,6 +11,12 @@
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+	Modifications made by [Gianluca Beil]:
+	- Replaced Map.of with double brace initialization
+	- Replaced var
+	- Replaced unsupported try blocks
+	- Removed deprecated functions
 */
 package mslinks;
 
@@ -40,13 +46,13 @@ public class ShellLink {
 
 	public static final String VERSION = "1.1.2";
 	
-	private static HashMap<Integer, Class<? extends Serializable>> extraTypes = new HashMap<>(Map.of(
-		ConsoleData.signature, ConsoleData.class,
-		ConsoleFEData.signature, ConsoleFEData.class,
-		Tracker.signature, Tracker.class,
-		VistaIDList.signature, VistaIDList.class,
-		EnvironmentVariable.signature, EnvironmentVariable.class
-	));
+	private static HashMap<Integer, Class<? extends Serializable>> extraTypes = new HashMap<Integer, Class<? extends Serializable>>() {{
+		put(ConsoleData.signature, ConsoleData.class);
+		put(ConsoleFEData.signature, ConsoleFEData.class);
+		put(Tracker.signature, Tracker.class);
+		put(VistaIDList.signature, VistaIDList.class);
+		put(EnvironmentVariable.signature, EnvironmentVariable.class);
+	}};
 	
 	
 	private ShellLinkHeader header;
@@ -80,15 +86,13 @@ public class ShellLink {
 	}
 	
 	public ShellLink(InputStream in) throws IOException, ShellLinkException {
-		try (var reader = new ByteReader(in)) {
+		try (ByteReader reader = new ByteReader(in)) {
 			parse(reader);
 		}
 	}
 
 	public ShellLink(ByteReader reader) throws IOException, ShellLinkException {
-		try (reader) {
-			parse(reader);
-		}
+		parse(reader);
 	}
 	
 	private void parse(ByteReader data) throws ShellLinkException, IOException {
@@ -127,7 +131,7 @@ public class ShellLink {
 	}
 
 	public void serialize(OutputStream out) throws IOException {
-		var bw = new ByteWriter(out);
+		ByteWriter bw = new ByteWriter(out);
 		serialize(bw);
 		out.close();
 	}
@@ -312,7 +316,7 @@ public class ShellLink {
 		if (linkFileSource != null && header.getLinkFlags().hasRelativePath() && relativePath != null) 
 			return linkFileSource.resolveSibling(relativePath).normalize().toString();
 
-		var envBlock = (EnvironmentVariable)extra.get(EnvironmentVariable.signature);
+		EnvironmentVariable envBlock = (EnvironmentVariable)extra.get(EnvironmentVariable.signature);
 		if (envBlock != null && !envBlock.getVariable().isEmpty())
 			return envBlock.getVariable();
 
@@ -335,56 +339,5 @@ public class ShellLink {
 			}
 		}
 		return block;
-	}
-
-	/**
-	 * @deprecated Use new ShellLinkHelper API: {@link ShellLinkHelper#saveTo(String path) }
-	 */
-	@Deprecated(since = "1.0.7", forRemoval = true)
-	public ShellLink saveTo(String path) throws IOException {
-		new ShellLinkHelper(this).saveTo(path);
-		return this;
-	}
-
-	/**
-	 * Set path to target file or directory. Function accepts local paths and network paths.
-	 * Environment variables are accepted but resolved here and aren't kept in the link.
-	 * @deprecated Use new ShellLinkHelper API: {@link ShellLinkHelper#setNetworkTarget(String path)} or {@link ShellLinkHelper#setLocalTarget(String drive, String absolutePath)}
-	 */
-	@Deprecated(since = "1.0.7", forRemoval = true)
-	public ShellLink setTarget(String target) {
-		target = ShellLinkHelper.resolveEnvVariables(target);
-		String targetAbsPath = Paths.get(target).toAbsolutePath().toString();
-
-		try {
-			var helper = new ShellLinkHelper(this);
-			if (targetAbsPath.startsWith("\\\\")) {
-				helper.setNetworkTarget(targetAbsPath);
-			} else {
-				String[] parts = targetAbsPath.split(":");
-				if (parts.length == 2)
-					helper.setLocalTarget(parts[0], parts[1]);
-			}
-		} catch (ShellLinkException e) {}
-		
-		return this;
-	}
-
-	/**
-	 * @deprecated Use new ShellLinkHelper API: {@link ShellLinkHelper#setNetworkTarget(String path)} or {@link ShellLinkHelper#setLocalTarget(String drive, String absolutePath)}
-	 */
-	@Deprecated(since = "1.0.7", forRemoval = true)
-	public static ShellLink createLink(String target) {
-		ShellLink sl = new ShellLink();
-		sl.setTarget( target );
-		return sl;
-	}
-
-	/**
-	 * @deprecated Use new ShellLinkHelper API: {@link ShellLinkHelper#createLink(String target, String linkpath)}
-	 */
-	@Deprecated(since = "1.0.7", forRemoval = true)
-	public static ShellLink createLink(String target, String linkpath) throws IOException {
-		return createLink(target).saveTo(linkpath);
 	}
 }

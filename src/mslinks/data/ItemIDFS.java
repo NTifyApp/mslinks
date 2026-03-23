@@ -11,6 +11,9 @@
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+	Modifications made by [Gianluca Beil]:
+	- Replaced var
 */
 package mslinks.data;
 
@@ -128,7 +131,7 @@ public class ItemIDFS extends ItemID {
 		}
 
 		int offsetInDataChunk = hiddenOffset - bytesParsed;
-		var hbr = new ByteReader(new ByteArrayInputStream(dataChunk, offsetInDataChunk, dataChunk.length));
+		ByteReader hbr = new ByteReader(new ByteArrayInputStream(dataChunk, offsetInDataChunk, dataChunk.length));
 		loadHiddenPart(hbr, dataChunk.length + 2 - offsetInDataChunk);
 	}
 

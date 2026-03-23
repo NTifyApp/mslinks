@@ -11,6 +11,10 @@
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+    Modifications made by [Gianluca Beil]:
+	- Replaced var
+	- Removed deprecated functions
 */
 package mslinks;
 
@@ -42,7 +46,7 @@ public class LinkTargetIDList extends LinkedList<ItemID> implements Serializable
 				break;
 
 			int typeFlags = data.read();
-			var item = ItemID.createItem(typeFlags);
+			ItemID item = ItemID.createItem(typeFlags);
 			item.load(data, itemSize - 3);
 			add(item);
 		}
@@ -74,14 +78,6 @@ public class LinkTargetIDList extends LinkedList<ItemID> implements Serializable
 		bw.write2bytes(0);
 	}
 
-	/**
-	 * @deprecated Equivalent of {@link #canBuildPath()} method
-	 */
-	@Deprecated(since = "1.0.9", forRemoval = true)
-	public boolean isCorrect() {
-		return canBuildPath();
-	}
-	
 	public boolean canBuildPath() {
 		for (ItemID i : this)
 			if (i instanceof ItemIDUnknown)
@@ -93,23 +89,23 @@ public class LinkTargetIDList extends LinkedList<ItemID> implements Serializable
 		if (size() < 2)
 			return false;
 
-		var firstId = getFirst();
+		Object firstId = getFirst();
 		if (!(firstId instanceof ItemIDRoot))
 			return false;
 		
-		var rootId = (ItemIDRoot) firstId;
+		ItemIDRoot rootId = (ItemIDRoot) firstId;
 		if (!rootId.getClsid().equals(Registry.CLSID_COMPUTER))
 			return false;
 
-		var secondId = get(1);
+		Object secondId = get(1);
 		return secondId instanceof ItemIDDrive;
 	}
 
 	public String buildPath() {
-		var path = new StringBuilder();
+		StringBuilder path = new StringBuilder();
 		if (!isEmpty()) {
 			// when a link created by drag'n'drop menu from desktop, id list starts from filename directly
-			var firstId = getFirst();
+			Object firstId = getFirst();
 			if (firstId instanceof ItemIDFS)
 				path.append("<Desktop>\\");
 

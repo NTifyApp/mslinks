@@ -50,13 +50,13 @@ public class Registry {
 	}
 
 	private static GUID registerClsid(String clsid, String name, Class<?>... allowedItemIdTypes) {
-		var guid = new GUID(clsid);
+		GUID guid = new GUID(clsid);
 		registerClsidInternal(guid, name, allowedItemIdTypes);
 		return guid;
 	}
 
 	private static void registerClsidInternal(GUID clsid, String name, Class<?>... allowedItemIdTypes) {
-		var entry = new Entry();
+		Entry entry = new Entry();
 		entry.clsid = clsid;
 		entry.name = name;
 		if (allowedItemIdTypes.length > 0)
@@ -72,7 +72,7 @@ public class Registry {
 		if (!indexClsids.containsKey(clsid))
 			throw new UnsupportedCLSIDException(clsid);
 		
-		var entry = indexClsids.get(clsid);
+		Registry.Entry entry = indexClsids.get(clsid);
 		return entry.name;
 	}
 
@@ -81,7 +81,7 @@ public class Registry {
 		if (!indexNames.containsKey(name))
 			throw new ShellLinkException(name + " is not found");
 		
-		var entry = indexNames.get(name);
+		Registry.Entry entry = indexNames.get(name);
 		return entry.clsid;
 	}
 
@@ -89,8 +89,8 @@ public class Registry {
 		if (!indexClsids.containsKey(clsid))
 			return false;
 		
-		var entry = indexClsids.get(clsid);
-		for (var i : entry.allowedItemIdTypes) {
+		Registry.Entry entry = indexClsids.get(clsid);
+		for (Class<?> i : entry.allowedItemIdTypes) {
 			if (i.isAssignableFrom(itemIdClass))
 				return true;
 		}

@@ -11,11 +11,16 @@
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+	Modifications made by [Gianluca Beil]:
+	- Replaced Path.of
 */
 package mslinks;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
@@ -1346,7 +1351,7 @@ public class ReadTestData extends TestUtils {
 	@Test
 	@Category(ReadTestData.class)
 	public void ExportLinkFiles() throws IllegalArgumentException, IllegalAccessException, IOException {
-		Path exportDir = Path.of(".working_dir", "export");
+		Path exportDir = Paths.get(".working_dir", "export");
 		ExportLinkFiles(exportDir, this.getClass(), true);
 	}
 }
