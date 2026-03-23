@@ -13,8 +13,8 @@ version = '1.1.2-SNAPSHOT'
 ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_11
-	targetCompatibility = JavaVersion.VERSION_11
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
     withJavadocJar()
     withSourcesJar()
 }
@@ -55,69 +55,4 @@ test {
 testlogger {
 	theme = 'mocha'
 	showStandardStreams = true
-}
-
-eclipse {
-    classpath {
-        defaultOutputDir = file('build/eclipse-default')
-        file.whenMerged {
-            entries.each { entry ->
-                if (entry.kind == 'src' && entry.hasProperty('output')) {
-                    entry.output = entry.output.replace('bin/', "build/eclipse/")
-                }
-            }
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = 'mslinks'
-            from components.java
-            pom {
-                name = 'mslinks'
-                description = 'Library for parsing and creating Windows shortcut files (.lnk)'
-                url = 'https://github.com/DmitriiShamrikov/mslinks'
-
-                licenses {
-                    license {
-                        name = 'WTFPL'
-                        url = 'http://www.wtfpl.net/about/'
-                        distribution = 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id = 'DmitriiShamrikov'
-                    }
-                }
-
-                scm {
-                    url = 'https://github.com/DmitriiShamrikov/mslinks'
-                    connection = 'scm:git:git://github.com/DmitriiShamrikov/mslinks.git'
-                    developerConnection = 'scm:git:git@github.com:DmitriiShamrikov/mslinks.git'
-                }
-            }
-        }
-    }
-}
-
-signing {
-    required = isReleaseVersion
-    useInMemoryPgpKeys(System.getenv("SIGNING_KEY"), System.getenv("SIGNING_PASSWORD"))
-    sign publishing.publications.mavenJava
-}
-
-nexusPublishing {
-    repositories {
-        // see https://central.sonatype.org/publish/publish-portal-ossrh-staging-api/#configuration
-        sonatype {
-            username = System.getenv("OSSRH_USERNAME")
-            password = System.getenv("OSSRH_TOKEN")
-            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
-        }
-    }
 }
