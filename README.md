@@ -6,6 +6,10 @@
 
 Library for parsing and creating Windows shortcut files (.lnk)
 
+## Forked for NTify
+
+This project was forked to port it to java 8
+
 ## Description
 
 This is an implementation of [Shell Link (.LNK) Binary File Format](http://msdn.microsoft.com/en-us/library/dd871305.aspx) plus some reverse engineering. The library doesn't depend on any Windows-specific API, so it can be used in any environment.
